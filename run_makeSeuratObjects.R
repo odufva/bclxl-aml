@@ -1,19 +1,10 @@
 
-folders        <- list.dirs("data/scRNAseq/", recursive = T)[-c(1,17)]
+## The index patient (9119) samples
+folders        <- list.dirs("data/scRNAseq/9119/", recursive = T)[-c(1,17)]
 scrnaseq_files <- lapply(folders, function(x){message(getSeuratName(x)); Read10X(data.dir = x) %>% CreateSeuratObject(project = getSeuratName(x), min.cells = 3, min.features = 200)})
 bcl_seurat     <- scrnaseq_files[[1]]
 
 ## Basic QC
-dir.create("results/qc/", showWarnings = F)
-dir.create("results/qc/before_1/", showWarnings = F)
-dir.create("results/qc/after_1/", showWarnings = F)
-
-bcl_seurat  <- PercentageFeatureSet(bcl_seurat, pattern = "^MT-", col.name = "percent.mt")
-bcl_seurat  <- PercentageFeatureSet(bcl_seurat, pattern = "^RP", col.name = "percent.ribo")
-bcl_seurat  <- PercentageFeatureSet(bcl_seurat, features = cycle.genes, col.name = "percent.cycle")
-bcl_seurat@meta.data$barcode   <- colnames(bcl_seurat)
-
-bcl_seurat %>% plotQC(folder = "results/qc/before_1/")
 bcl_seurat <- bcl_seurat %>% getQC()
 
 ## Get SingleR predictions; omit predictions from cell types rare than 10 cells
@@ -35,7 +26,7 @@ unwanted_genes  <- getUnwantedGenes(bcl_seurat)
 bcl_seurat <- bcl_seurat %>% preprocessSeurat(cells.to.use = colnames(bcl_seurat))
 bcl_seurat <- bcl_seurat %>% getClustering()
 
-## Get scVI
+## Make scVI input
 dir.create("results/scvi/", showWarnings = F)
 dir.create("results/scvi/input_files/", showWarnings = F)
 bcl_seurat$orig.ident <- gsub("\\/", "\\_", bcl_seurat$orig.ident)
@@ -48,12 +39,10 @@ bcl_seurat <- bcl_seurat %>% getLatentClustering() %>% fixSeurat()
 
 ## Decide on clustering
 bcl_seurat %>% plotClustering()
-ggsave("results/qc/after_1/scatter_clustering.png", width = 5, height = 4)
-
 Idents(bcl_seurat) <- bcl_seurat$RNA_snn_res.0.7 %>% as.character() %>% as.numeric() %>% as.factor()
-bcl_seurat$cluster <- Idents(bcl_seurat)
 saveRDS(bcl_seurat, "results/bcl_seurat.rds")
 
+## Get DEGs
 all_markers <- FindAllMarkers(bcl_seurat, test = "t")
 fwrite(all_markers, "results/de.txt", sep = "\t", quote = F, row.names = F)
 
@@ -89,25 +78,7 @@ hemap_seurat <- hemap_seurat %>% getDoublets()
 hemap_seurat <- subset(hemap_seurat, hybrid_doublet_score < 1.8)
 
 ## Get Seurat
-clonality_genes <- getClonalityGenes(hemap_seurat)
-unwanted_genes  <- getUnwantedGenes(hemap_seurat)
-
 hemap_seurat <- hemap_seurat %>% preprocessSeurat(cells.to.use = colnames(hemap_seurat))
-
-# ## Get scVI
-dir.create("results/scvi/", showWarnings = F)
-dir.create("results/scvi/input_files/", showWarnings = F)
-dir.create("results/scvi/input_files/hemap/", showWarnings = F)
-
-hemap_seurat$orig.ident <- gsub("\\/", "\\_", hemap_seurat$orig.ident)
-hemap_seurat %>% getScviInput(folder = "results/scvi/input_files/hemap/")
-
-## Get scVI results
-latents      <- fread("results/scvi/output/hemap_latent.csv")
-hemap_seurat <- hemap_seurat %>% putLatentsSeurat(latent = latents)
-hemap_seurat <- hemap_seurat %>% getLatentClustering() %>% fixSeurat()
-Idents(hemap_seurat) <- hemap_seurat$singler_blueprint_pred
-
 
 ## Focus only on blasts
 celltypes.to.keep <- c("CMP", "GMP", "HSC", "Megakaryocytes", "MEP", "MPP", "Monocytes")
@@ -115,8 +86,7 @@ cells.to.keep     <- hemap_seurat@meta.data %>% filter(singler_blueprint_pred %i
 blastpre_seurat   <- subset(hemap_seurat, cells = cells.to.keep)
 blastpre_seurat   <- blastpre_seurat %>% getLatentUMAP()
 
-
-# ## Get scVI
+# ## Get scVI input files
 dir.create("results/scvi/input_files/hemap_blast_pre/", showWarnings = F)
 blastpre_seurat %>% getScviInput(folder = "results/scvi/input_files/hemap_blast_pre/")
 
