@@ -20,9 +20,8 @@ rownames(mat) <- dss$DRUG_NAME
 # order according to Western blot
 cell_lines <- c("F36P", "OCIM1", "M07", "HNT34", "TF1", "CMK", "HEL", "PL21", "SKM1", "KG1", "SH1", "THP1", "GDM1", "KASUMI1", "OCIAML3", "MV411", "SH2", "NOMO1", "HL60", "ML2", "MOLM13")
 genes <- c("BCL2L1", "BCL2", "MCL1", "GATA1", "GFI1B", "TAL1", "KLF1", "NFE2")
-colnames(mat) <- gsub("MO7", "M07", colnames(mat)) # correct cell line name
 mat <- mat[c("A-1331852", "A-1155463", "Navitoclax", "Venetoclax", "S-63845"), cell_lines]
-rownames(mat) <- c("A-1331852 (BXL-XL)", "A-1155463 (BCL-XL)", "Navitoclax (BCL-XL/BCL-2)", "Venetoclax (BCL-2)", "S-63485 (MCL-1)")
+rownames(mat) <- c("A-1331852 (BCL-XL)", "A-1155463 (BCL-XL)", "Navitoclax (BCL-XL/BCL-2)", "Venetoclax (BCL-2)", "S-63485 (MCL-1)")
 ht_dss <- Heatmap(mat,
         name = "DSS",
         cluster_rows = F,
