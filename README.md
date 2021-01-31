@@ -3,10 +3,10 @@ Scripts to reproduce figures and analyses in the manuscript "Erythroid/megakaryo
 
 ## To reproduce the results, obtain source data from Synapse:
 - Get synapse credentials https://www.synapse.org
-- Access synapse project SYNAPSE
+- Access synapse project syn24200411 (https://www.synapse.org/bclxl_aml)
 - Download project data:
 	- Input files individually (see scripts for filenames and download from SYNAPSE) (Recommended) 
-	- Programmatic access (synapse, check synapseID_Filename.txt for accession codes):
+	- Programmatic access (synapse, check synapse IDs from synapse):
 		```
 		pip install synapseclient
 		synapse get synapseID
@@ -14,5 +14,5 @@ Scripts to reproduce figures and analyses in the manuscript "Erythroid/megakaryo
 	- Synapse bulk (SIZE):
 		```
 		pip install synapseclient
-		synapse get SYNAPSE -r
+		synapse get syn24200411 -r
 		```
