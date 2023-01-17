@@ -1,5 +1,6 @@
 
 # Plot erythroid/megakaryoblastic vs other AML RNAi dependency scores (Figures 2C-D)
+# New version for revision without CML lines
 
 # load libraries
 library(ggplot2)
@@ -27,11 +28,11 @@ colnames(data) <- gsub("^X", "", colnames(cell_line_names)[match(gsub("\\.", "",
 annot_rnai <- annot[match(colnames(data), annot$CCLE.name),]
 
 # select AML and CML cell lines
-rnai_aml <- data[,annot_rnai$Hist.Subtype1 %in% c("acute_myeloid_leukaemia", "blast_phase_chronic_myeloid_leukaemia")]
+rnai_aml <- data[,annot_rnai$Hist.Subtype1 %in% c("acute_myeloid_leukaemia")]
 rnai_aml[rnai_aml == "NaN"] <- NA
 
 # define erythroid/megakaryoblastic and other cell lines
-erythroid <- colnames(rnai_aml)[grepl("CMK|CMK115|F36P|HEL|HEL9217|MOLM16|LAMA84|K562", colnames(rnai_aml))]
+erythroid <- colnames(rnai_aml)[grepl("CMK|CMK115|F36P|HEL|HEL9217|MOLM16", colnames(rnai_aml))]
 erythroid
 other <- colnames(rnai_aml)[!colnames(rnai_aml) %in% erythroid]
 other
@@ -73,12 +74,12 @@ p <- ggplot(result_t, aes(x = dCS, y = log10p)) +
   theme_cowplot()
 
 
-pdf("Fig2C_RNAi_volcanoplot.pdf", height = 5, width = 5)
+pdf("Fig2C_RNAi_volcanoplot_revision.pdf", height = 5, width = 5)
 p
 dev.off()
 
 # print result table
-write.table(result_t, "TableS4_RNAi_erythroid_megakaryoblastic.txt", quote = F, row.names = F, sep = "\t")
+write.table(result_t, "TableS4_RNAi_erythroid_megakaryoblastic_revision.txt", quote = F, row.names = F, sep = "\t")
 
 
 # plot individual genes across cell lines
@@ -90,15 +91,14 @@ data_BCL2L1$variable <- rownames(data_BCL2L1)
 data_BCL2L1$Subtype <- "Other AML"
 data_BCL2L1$Subtype[rownames(data_BCL2L1)%in%c("F36P", "HEL", "HEL9217")] <- "Erythroid AML"
 data_BCL2L1$Subtype[rownames(data_BCL2L1)%in%c("CMK", "CMK115", "MOLM16")] <- "Megakaryoblastic AML"
-data_BCL2L1$Subtype[rownames(data_BCL2L1)%in%c("K562", "LAMA84")] <- "Erythroid CML"
 
-pdf("Fig2D_RNAi_barplot_BCL2L1.pdf", height = 4, width = 6)
+pdf("Fig2D_RNAi_barplot_BCL2L1_revision.pdf", height = 4.75, width = 6)
 ggplot(data_BCL2L1, aes(y = reorder(variable, -value), x = value, fill = Subtype)) +
   geom_bar(stat = "identity") +
   theme_cowplot() +
   theme(axis.text.x = element_text(angle = 0, hjust = 1, vjust = 0.5),
         plot.title = element_text(hjust = 0, face = "plain")) +
-  scale_fill_manual(values = c("Erythroid AML" = brewer.pal(11, "RdBu")[2], "Megakaryoblastic AML" = "#d35f5f", "Erythroid CML" = "#ff5555", "Other AML" = "grey50")) +
+  scale_fill_manual(values = c("Erythroid AML" = brewer.pal(11, "RdBu")[2], "Megakaryoblastic AML" = "#d35f5f", "Other AML" = "grey50")) +
   xlab("Dependency score") +
   ylab("") +
   ggtitle("BCL2L1 RNAi") +
