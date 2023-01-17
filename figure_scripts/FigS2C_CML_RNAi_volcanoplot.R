@@ -1,5 +1,5 @@
 
-# Plot erythroid CML RNAi dependency scores (Figure S2C for revision)
+# Plot erythroid CML RNAi dependency scores (Figure S2C)
 
 # load libraries
 library(ggplot2)
