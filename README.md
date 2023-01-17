@@ -16,3 +16,7 @@ Scripts to reproduce figures and analyses in the manuscript "Erythroid/megakaryo
 		pip install synapseclient
 		synapse get syn24200411 -r
 		```
+		
+		
+## Processed scRNA-seq data is also available at ArrayExpress
+https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-12607
