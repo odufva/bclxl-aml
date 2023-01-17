@@ -1,5 +1,5 @@
 
-# Plot BCL-2 family expression in TCGA AML data (Figure 3B)
+# Plot BCL-2 family expression in TCGA AML data (Figure 3C)
 
 # load libraries
 library(parallel)
