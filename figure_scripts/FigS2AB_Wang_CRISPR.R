@@ -1,5 +1,5 @@
 
-# Plot Wang. et al CRISPR screen data (Figure S2)
+# Plot Wang. et al CRISPR screen data (Figure S2A-B)
 
 # load libraries
 library(ggplot2)
