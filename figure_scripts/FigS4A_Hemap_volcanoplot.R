@@ -1,5 +1,5 @@
 
-# Plot volcano plot of Hemap erythroleukemia vs other hematological malignancies (Figure S3A)
+# Plot volcano plot of Hemap erythroleukemia vs other hematological malignancies (Figure S4A)
 
 # load libraries
 library(parallel)
