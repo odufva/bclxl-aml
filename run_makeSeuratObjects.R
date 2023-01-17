@@ -1,6 +1,6 @@
 
-## The index patient (9119) samples
-folders        <- list.dirs("data/scRNAseq/9119/", recursive = T)[-c(1,17)]
+## The index patient (AML1) samples
+folders        <- list.dirs("data/scRNAseq/AML1/", recursive = T)[-c(1,17)]
 scrnaseq_files <- lapply(folders, function(x){message(getSeuratName(x)); Read10X(data.dir = x) %>% CreateSeuratObject(project = getSeuratName(x), min.cells = 3, min.features = 200)})
 bcl_seurat     <- scrnaseq_files[[1]]
 
@@ -82,7 +82,7 @@ hemap_seurat <- hemap_seurat %>% preprocessSeurat(cells.to.use = colnames(hemap_
 
 ## Focus only on blasts
 celltypes.to.keep <- c("CMP", "GMP", "HSC", "Megakaryocytes", "MEP", "MPP", "Monocytes")
-cells.to.keep     <- hemap_seurat@meta.data %>% filter(singler_blueprint_pred %in% celltypes.to.keep) %>% filter(orig.ident != "FH_9119_R1") %>% pull(barcode)
+cells.to.keep     <- hemap_seurat@meta.data %>% filter(singler_blueprint_pred %in% celltypes.to.keep) %>% filter(orig.ident != "AML1") %>% pull(barcode)
 blastpre_seurat   <- subset(hemap_seurat, cells = cells.to.keep)
 blastpre_seurat   <- blastpre_seurat %>% getLatentUMAP()
 
