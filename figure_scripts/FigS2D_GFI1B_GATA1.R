@@ -1,5 +1,5 @@
 
-
+# Plot expression of BCL2L1 with GFI1B and GATA1 knockdown in data from Replogle et al. Cell 2022 (Figure S2D) 
 
 library(anndata)
 library(dplyr)
