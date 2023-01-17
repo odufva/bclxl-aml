@@ -1,5 +1,5 @@
 
-# Plot BCL2 family gene expression boxplots across Hemap subtypes (Figures 3C and S3B-C)
+# Plot BCL2 family gene expression boxplots across Hemap subtypes (Figures 3D and S4B-C)
 
 # load libraries
 library(parallel)
