@@ -193,27 +193,16 @@ putLatentsSeurat <- function(seurat_object, latent){
   return(seurat_object)
 }
 
-getScviInput <- function(seurat_object, folder){
-
-  dir.create(folder, showWarnings = F)
-  genes_to_keep <- list()
-  i <- 1
-  Idents(seurat_object) <- seurat_object$orig.ident
-
-  for(patient in unique(seurat_object$orig.ident)){
-
-    message(patient)
-    seurat_temp <- subset(seurat_object, idents = patient)
-    counts_temp <- seurat_temp@assays$RNA@counts %>% as.data.frame
-
-    genes_to_keep[[i]] <- rownames(counts_temp)
-    i <- i + 1
-
-    counts_temp <- seurat_object@assays$RNA@counts[ ,seurat_object$orig.ident == patient] %>% as.data.frame
-    counts_temp <- counts_temp[!rownames(counts_temp) %in% clonality_genes, ]
-    data.table::fwrite(counts_temp, paste0(folder, patient, ".csv"), sep = ",", quote = F, row.names = T, col.names = T)
-
-  }
+seuratToScvi <- function(seurat_object, file = “results/seurat_object.h5Seurat”){
+  
+  idents.to.keep <- seurat_object@meta.data %>% group_by(orig.ident) %>% summarise(n=n()) %>% filter(n>3) %>% pull(orig.ident)
+  cells.to.keep  <- seurat_object@meta.data %>% filter(orig.ident %in% idents.to.keep) %>% pull(barcode)
+  seurat_object  <- subset(seurat_object, cells = cells.to.keep)
+  seurat_object_diet <- DietSeurat(seurat_object)
+  seurat_object_diet@assays$RNA@data <- seurat_object_diet@assays$RNA@counts
+  SeuratDisk::SaveH5Seurat(seurat_object_diet, filename = file)
+  SeuratDisk::Convert(file, dest = “h5ad”)
+  
 }
 
 preprocessSeurat <- function(orig_object, cells.to.use){
