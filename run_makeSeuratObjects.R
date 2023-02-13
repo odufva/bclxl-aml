@@ -84,11 +84,10 @@ hemap_seurat <- hemap_seurat %>% preprocessSeurat(cells.to.use = colnames(hemap_
 celltypes.to.keep <- c("CMP", "GMP", "HSC", "Megakaryocytes", "MEP", "MPP", "Monocytes")
 cells.to.keep     <- hemap_seurat@meta.data %>% filter(singler_blueprint_pred %in% celltypes.to.keep) %>% filter(orig.ident != "AML1") %>% pull(barcode)
 blastpre_seurat   <- subset(hemap_seurat, cells = cells.to.keep)
-blastpre_seurat   <- blastpre_seurat %>% getLatentUMAP()
 
 # ## Get scVI input files
 dir.create("results/scvi/input_files/hemap_blast_pre/", showWarnings = F)
-blastpre_seurat %>% getScviInput(folder = "results/scvi/input_files/hemap_blast_pre/")
+blastpre_seurat %>% seuratToScvi("results/scvi/input_files/hemap_blast_pre/blastpre_seurat.h5seurat")
 
 ## Get scVI results
 latents      <- fread("results/scvi/output/hemap_blast_pre_latent.csv")
